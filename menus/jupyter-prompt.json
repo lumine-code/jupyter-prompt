@@ -1,0 +1,13 @@
+{
+  "menu": [
+    {
+      "label": "Packages",
+      "submenu": [
+        {
+          "label": "Jupyter Prompt",
+          "submenu": [{ "label": "Toggle Prompt", "command": "jupyter-prompt:toggle" }]
+        }
+      ]
+    }
+  ]
+}

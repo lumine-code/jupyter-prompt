@@ -1,0 +1,53 @@
+{
+  "name": "jupyter-prompt",
+  "author": "lumine-code",
+  "description": "Run code on the current kernel from a prompt with history.",
+  "repository": "https://github.com/lumine-code/jupyter-prompt",
+  "bugs": {
+    "url": "https://github.com/lumine-code/jupyter-prompt/issues"
+  },
+  "keywords": [
+    "kernel",
+    "execute",
+    "repl",
+    "history",
+    "run"
+  ],
+  "version": "1.0.0",
+  "license": "MIT",
+  "engines": {
+    "lumine": "^1.0.0"
+  },
+  "backgroundTips": [
+    "You can run code on the current Jupyter kernel with {{ 'jupyter-prompt:toggle' | keystroke }}"
+  ],
+  "main": "./lib/main",
+  "activationCommands": {
+    "atom-workspace": [
+      "jupyter-prompt:toggle"
+    ]
+  },
+  "scripts": {
+    "test": "lumine --test spec",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "dayjs": "^1.11.21"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.7.0",
+    "prettier": "^3.9.6"
+  },
+  "consumedServices": {
+    "jupyter.kernel": {
+      "versions": {
+        "^1.0.0": "consumeJupyterKernel"
+      }
+    }
+  }
+}
