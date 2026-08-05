@@ -1,6 +1,6 @@
 {
   "atom-workspace": {
-    "alt-h e": "jupyter-prompt:toggle"
+    "alt-j p": "jupyter-prompt:toggle"
   },
 
   "atom-workspace .jupyter-prompt atom-text-editor[mini]": {
