@@ -16,7 +16,7 @@ To install `jupyter-prompt` search for _jupyter-prompt_ in the Install pane of t
 
 ## Commands
 
-Commands available in `atom-workspace`:
+Commands available in `lumine-workspace`:
 
 - `jupyter-prompt:toggle`: open or close the prompt.
 

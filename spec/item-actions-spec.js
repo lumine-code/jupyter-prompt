@@ -10,16 +10,16 @@ describe("jupyter-prompt item actions", () => {
   let panel;
 
   beforeEach(async () => {
-    jasmine.attachToDOM(atom.views.getView(atom.workspace));
-    const activation = atom.packages.activatePackage(PACKAGE_PATH);
-    atom.commands.dispatch(atom.views.getView(atom.workspace), "jupyter-prompt:toggle");
+    jasmine.attachToDOM(lumine.views.getView(lumine.workspace));
+    const activation = lumine.packages.activatePackage(PACKAGE_PATH);
+    lumine.commands.dispatch(lumine.views.getView(lumine.workspace), "jupyter-prompt:toggle");
     await activation;
     panel = new PromptPanel(() => null);
   });
 
   afterEach(async () => {
     panel.destroy();
-    await atom.packages.deactivatePackage("jupyter-prompt");
+    await lumine.packages.deactivatePackage("jupyter-prompt");
   });
 
   it("offers both entry commands as actions, bound to the keys the panel documents", () => {
@@ -50,7 +50,7 @@ describe("jupyter-prompt item actions", () => {
     // The actions list wears the panel's own classes, so a package binding on
     // Enter would follow it in and run a history entry instead of the action
     // under the cursor. The panel binds nothing on Enter for that reason.
-    const bindings = atom.keymaps.findKeyBindings({
+    const bindings = lumine.keymaps.findKeyBindings({
       keystrokes: "enter",
       target: panel.selectList.refs.queryEditor.element,
     });
@@ -64,7 +64,7 @@ describe("jupyter-prompt item actions", () => {
     panel.selectList.show();
 
     await panel.selectList.showItemActions();
-    expect(atom.workspace.getModalTrail()).toEqual(["Prompt History", "Actions"]);
+    expect(lumine.workspace.getModalTrail()).toEqual(["Prompt History", "Actions"]);
 
     const index = panel.selectList.itemActionsList.items.findIndex(
       (item) => item.command === "jupyter-prompt:recall-history-entry",

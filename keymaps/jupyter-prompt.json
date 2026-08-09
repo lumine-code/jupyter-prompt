@@ -1,9 +1,9 @@
 {
-  "atom-workspace": {
+  "lumine-workspace": {
     "alt-j p": "jupyter-prompt:toggle"
   },
 
-  "atom-workspace .jupyter-prompt atom-text-editor[mini]": {
+  "lumine-workspace .jupyter-prompt lumine-text-editor[mini]": {
     "shift-enter": "jupyter-prompt:recall-history-entry"
   }
 }

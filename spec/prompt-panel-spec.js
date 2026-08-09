@@ -53,7 +53,7 @@ describe("jupyter-prompt panel", () => {
   });
 
   it("returns to the prompt when a move steps off either end of the history", async () => {
-    jasmine.attachToDOM(atom.views.getView(atom.workspace));
+    jasmine.attachToDOM(lumine.views.getView(lumine.workspace));
     panel.selectList.show();
     panel.addToHistory("first");
     panel.addToHistory("second");
@@ -61,24 +61,24 @@ describe("jupyter-prompt panel", () => {
     const selected = () => panel.selectList.getSelectedItem()?.code ?? null;
 
     // Down walks in from the prompt, top to bottom...
-    atom.commands.dispatch(editor, "core:move-down");
+    lumine.commands.dispatch(editor, "core:move-down");
     expect(selected()).toBe("second");
-    atom.commands.dispatch(editor, "core:move-down");
+    lumine.commands.dispatch(editor, "core:move-down");
     expect(selected()).toBe("first");
 
     // ...steps off the bottom back to the prompt, where Enter runs what is
     // typed, and carries on into the top from there.
-    atom.commands.dispatch(editor, "core:move-down");
+    lumine.commands.dispatch(editor, "core:move-down");
     expect(selected()).toBeNull();
-    atom.commands.dispatch(editor, "core:move-down");
+    lumine.commands.dispatch(editor, "core:move-down");
     expect(selected()).toBe("second");
 
     // Up is the same cycle in reverse.
-    atom.commands.dispatch(editor, "core:move-up");
+    lumine.commands.dispatch(editor, "core:move-up");
     expect(selected()).toBeNull();
-    atom.commands.dispatch(editor, "core:move-up");
+    lumine.commands.dispatch(editor, "core:move-up");
     expect(selected()).toBe("first");
-    atom.commands.dispatch(editor, "core:move-up");
+    lumine.commands.dispatch(editor, "core:move-up");
     expect(selected()).toBe("second");
   });
 
@@ -141,12 +141,12 @@ describe("jupyter-prompt panel", () => {
   });
 
   it("runs the selection through its own command, so the key is an action", async () => {
-    jasmine.attachToDOM(atom.views.getView(atom.workspace));
+    jasmine.attachToDOM(lumine.views.getView(lumine.workspace));
     panel.selectList.show();
     panel.addToHistory("import numpy");
     await panel.selectList.selectIndex(0);
 
-    atom.commands.dispatch(
+    lumine.commands.dispatch(
       panel.selectList.refs.queryEditor.element,
       "jupyter-prompt:run-history-entry",
     );
@@ -160,7 +160,7 @@ describe("jupyter-prompt panel", () => {
     spyOn(panel, "execute");
     panel.selectList.refs.queryEditor.setText("1 + 1");
 
-    atom.commands.dispatch(
+    lumine.commands.dispatch(
       panel.selectList.refs.queryEditor.element,
       "jupyter-prompt:run-history-entry",
     );
@@ -169,7 +169,7 @@ describe("jupyter-prompt panel", () => {
   });
 
   it("re-runs a confirmed entry and closes the panel", async () => {
-    jasmine.attachToDOM(atom.views.getView(atom.workspace));
+    jasmine.attachToDOM(lumine.views.getView(lumine.workspace));
     panel.selectList.show();
     panel.addToHistory("import numpy");
     await panel.selectList.selectIndex(0);
@@ -208,7 +208,7 @@ describe("jupyter-prompt panel", () => {
   });
 
   it("executes the query, closes the panel, and restores the full history view", async () => {
-    jasmine.attachToDOM(atom.views.getView(atom.workspace));
+    jasmine.attachToDOM(lumine.views.getView(lumine.workspace));
     panel.selectList.show();
     panel.selectList.refs.queryEditor.setText("1 + 1");
 
@@ -225,14 +225,14 @@ describe("jupyter-prompt panel", () => {
   });
 
   it("keeps the panel and the typed code when there is no kernel to run on", async () => {
-    jasmine.attachToDOM(atom.views.getView(atom.workspace));
+    jasmine.attachToDOM(lumine.views.getView(lumine.workspace));
     kernel = null;
     panel.selectList.show();
     panel.selectList.refs.queryEditor.setText("1 + 1");
 
     await panel.execute();
 
-    expect(atom.notifications.getNotifications().map((n) => n.getMessage())).toEqual([
+    expect(lumine.notifications.getNotifications().map((n) => n.getMessage())).toEqual([
       "No kernel running",
     ]);
     expect(panel.selectList.isVisible()).toBeTruthy();

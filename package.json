@@ -23,7 +23,7 @@
   ],
   "main": "./lib/main",
   "activationCommands": {
-    "atom-workspace": [
+    "lumine-workspace": [
       "jupyter-prompt:toggle"
     ]
   },
