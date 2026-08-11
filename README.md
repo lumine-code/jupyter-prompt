@@ -12,6 +12,8 @@ A modal prompt over the running kernel: type code, press Enter, and it executes 
 - **Outcome badges**: each entry carries ok, error (with the exception as its tooltip), or still-running.
 - **Current kernel, always**: the prompt asks at run time, so it follows the active editor's kernel.
 
+## Installation
+
 To install `jupyter-prompt` search for _jupyter-prompt_ in the Install pane of the Lumine settings or run `lumine --install lumine-code/jupyter-prompt`.
 
 ## Commands
