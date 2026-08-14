@@ -14,7 +14,7 @@ A modal prompt over the running kernel: type code, press Enter, and it executes 
 
 ## Installation
 
-To install `jupyter-prompt` search for _jupyter-prompt_ in the Install pane of the Lumine settings or run `lumine --install lumine-code/jupyter-prompt`.
+To install `jupyter-prompt` search for it in the Install pane of the Lumine settings, or run the command `lumine --install lumine-code/jupyter-prompt`.
 
 ## Commands
 
@@ -29,7 +29,7 @@ Commands available in `.jupyter-prompt`:
 
 ## Services
 
-- **jupyter.kernel** (`^1.0.0`): consumed to execute code on the active editor's kernel.
+- `jupyter.kernel`: consumed to execute code on the active editor's kernel.
 
 ## Contributing
 
