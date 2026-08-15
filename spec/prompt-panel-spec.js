@@ -220,8 +220,12 @@ describe("jupyter-prompt panel", () => {
     // entry does: the point of running it is to see its output. The prompt
     // goes with it, so the next open lists the whole history.
     expect(panel.selectList.isVisible()).toBeFalsy();
-    expect(panel.selectList.getQuery()).toBe("");
     expect(panel.selectList.items).toEqual(panel.history);
+
+    // And the next open lists all of it rather than staying filtered to the
+    // thing just run, because the list clears its query whenever it opens.
+    panel.selectList.show();
+    expect(panel.selectList.getQuery()).toBe("");
   });
 
   it("keeps the panel and the typed code when there is no kernel to run on", async () => {
