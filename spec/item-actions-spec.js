@@ -28,7 +28,7 @@ describe("jupyter-prompt item actions", () => {
 
     const run = byCommand.get("jupyter-prompt:run-history-entry");
     expect(run.name).toBe("Run History Entry");
-    expect(run.description).toBe("Run the selected entry and close the panel");
+    expect(run.description).toBe("Run the selected entry and close the panel.");
     // Enter reaches it as chrome, through core:confirm, so the keymap binds
     // nothing of its own — the row is listed without a key, like every other
     // list's confirm action.
@@ -37,7 +37,7 @@ describe("jupyter-prompt item actions", () => {
     const recall = byCommand.get("jupyter-prompt:recall-history-entry");
     expect(recall.name).toBe("Recall History Entry");
     expect(recall.description).toBe(
-      "Put the selected entry back in the prompt to edit before running it",
+      "Put the selected entry back in the prompt to edit before running it.",
     );
     expect(recall.keystrokes).toEqual(["shift-enter"]);
 
