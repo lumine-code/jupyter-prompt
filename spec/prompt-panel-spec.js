@@ -156,7 +156,7 @@ describe("jupyter-prompt panel", () => {
     expect(panel.selectList.isVisible()).toBeFalsy();
   });
 
-  it("falls back to the prompt when the run command fires with nothing selected", () => {
+  it("keeps the history command scoped to a selected entry", () => {
     spyOn(panel, "execute");
     panel.selectList.refs.queryEditor.setText("1 + 1");
 
@@ -165,7 +165,19 @@ describe("jupyter-prompt panel", () => {
       "jupyter-prompt:run-history-entry",
     );
 
-    expect(panel.execute).toHaveBeenCalled();
+    expect(panel.execute).not.toHaveBeenCalled();
+  });
+
+  it("runs the typed prompt through its semantic command", () => {
+    spyOn(panel, "execute");
+    panel.selectList.refs.queryEditor.setText("1 + 1");
+
+    lumine.commands.dispatch(
+      panel.selectList.refs.queryEditor.element,
+      "jupyter-prompt:run-prompt",
+    );
+
+    expect(panel.execute).toHaveBeenCalledTimes(1);
   });
 
   it("re-runs a confirmed entry and closes the panel", async () => {

@@ -22,17 +22,16 @@ describe("jupyter-prompt item actions", () => {
     await lumine.packages.deactivatePackage("jupyter-prompt");
   });
 
-  it("offers both entry commands as actions, bound to the keys the panel documents", () => {
-    const actions = panel.selectList.itemActions();
-    const byCommand = new Map(actions.map((action) => [action.command, action]));
+  it("switches the displayed Enter action between history and the typed prompt", async () => {
+    panel.addToHistory("import numpy");
+    await panel.selectList.selectIndex(0);
+    let actions = panel.selectList.itemActions();
+    let byCommand = new Map(actions.map((action) => [action.command, action]));
 
     const run = byCommand.get("jupyter-prompt:run-history-entry");
     expect(run.name).toBe("Run History Entry");
     expect(run.description).toBe("Run the selected entry and close the panel.");
-    // Enter reaches it as chrome, through core:confirm, so the keymap binds
-    // nothing of its own — the row is listed without a key, like every other
-    // list's confirm action.
-    expect(run.keystrokes).toEqual([]);
+    expect(run.keystrokes).toEqual(["enter"]);
 
     const recall = byCommand.get("jupyter-prompt:recall-history-entry");
     expect(recall.name).toBe("Recall History Entry");
@@ -44,6 +43,21 @@ describe("jupyter-prompt item actions", () => {
     // Chrome and the workspace-level toggle stay out.
     expect(byCommand.has("core:confirm")).toBe(false);
     expect(byCommand.has("jupyter-prompt:toggle")).toBe(false);
+
+    panel.selectList.refs.queryEditor.setText("1 + 1");
+    panel.selectList.selectNone();
+    actions = panel.selectList.itemActions();
+    byCommand = new Map(actions.map((action) => [action.command, action]));
+    expect([...byCommand.keys()]).toEqual(["jupyter-prompt:run-prompt"]);
+    expect(byCommand.get("jupyter-prompt:run-prompt").description).toBe(
+      "Run the typed prompt and close the panel.",
+    );
+    expect(byCommand.get("jupyter-prompt:run-prompt").scope).toBe("list");
+    expect(byCommand.get("jupyter-prompt:run-prompt").keystrokes).toEqual(["enter"]);
+
+    panel.selectList.refs.queryEditor.setText("   ");
+    panel.selectList.selectNone();
+    expect(panel.selectList.itemActions()).toEqual([]);
   });
 
   it("leaves Enter bound to the chrome, so it still confirms inside the actions list", () => {
@@ -74,5 +88,21 @@ describe("jupyter-prompt item actions", () => {
 
     expect(panel.selectList.getQuery()).toBe("import numpy");
     expect(panel.selectList.isVisible()).toBeTruthy();
+  });
+
+  it("runs the typed-prompt action once", async () => {
+    panel.selectList.show();
+    panel.selectList.refs.queryEditor.setText("1 + 1");
+    panel.selectList.selectNone();
+    const execute = spyOn(panel, "execute");
+
+    await panel.selectList.showItemActions();
+    const index = panel.selectList.itemActionsList.items.findIndex(
+      (item) => item.command === "jupyter-prompt:run-prompt",
+    );
+    panel.selectList.itemActionsList.selectIndex(index);
+    panel.selectList.itemActionsList.confirmSelection();
+
+    expect(execute).toHaveBeenCalledTimes(1);
   });
 });

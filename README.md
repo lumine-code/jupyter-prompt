@@ -24,6 +24,7 @@ Commands available in `lumine-workspace`:
 
 Commands available in `.jupyter-prompt`:
 
+- `jupyter-prompt:run-prompt`: run the typed prompt and close the panel,
 - `jupyter-prompt:run-history-entry`: run the selected entry and close the panel,
 - `jupyter-prompt:recall-history-entry`: put the selected entry back in the prompt to edit before running it.
 
