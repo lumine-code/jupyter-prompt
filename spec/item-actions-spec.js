@@ -44,7 +44,7 @@ describe("jupyter-prompt item actions", () => {
     expect(byCommand.has("core:confirm")).toBe(false);
     expect(byCommand.has("jupyter-prompt:toggle")).toBe(false);
 
-    panel.selectList.refs.queryEditor.setText("1 + 1");
+    panel.selectList.getQueryEditor().setText("1 + 1");
     panel.selectList.selectNone();
     actions = panel.selectList.itemActions();
     byCommand = new Map(actions.map((action) => [action.command, action]));
@@ -55,7 +55,7 @@ describe("jupyter-prompt item actions", () => {
     expect(byCommand.get("jupyter-prompt:run-prompt").scope).toBe("list");
     expect(byCommand.get("jupyter-prompt:run-prompt").keystrokes).toEqual(["enter"]);
 
-    panel.selectList.refs.queryEditor.setText("   ");
+    panel.selectList.getQueryEditor().setText("   ");
     panel.selectList.selectNone();
     expect(panel.selectList.itemActions()).toEqual([]);
   });
@@ -66,7 +66,7 @@ describe("jupyter-prompt item actions", () => {
     // under the cursor. The panel binds nothing on Enter for that reason.
     const bindings = lumine.keymaps.findKeyBindings({
       keystrokes: "enter",
-      target: panel.selectList.refs.queryEditor.element,
+      target: panel.selectList.getQueryEditor().element,
     });
 
     expect(bindings[0].command).toBe("core:confirm");
@@ -92,7 +92,7 @@ describe("jupyter-prompt item actions", () => {
 
   it("runs the typed-prompt action once", async () => {
     panel.selectList.show();
-    panel.selectList.refs.queryEditor.setText("1 + 1");
+    panel.selectList.getQueryEditor().setText("1 + 1");
     panel.selectList.selectNone();
     const execute = spyOn(panel, "execute");
 

@@ -41,9 +41,9 @@ describe("jupyter-prompt panel", () => {
   });
 
   it("keeps a repeated execution as its own entry", async () => {
-    panel.selectList.refs.queryEditor.setText("1 + 1");
+    panel.selectList.getQueryEditor().setText("1 + 1");
     await panel.execute();
-    panel.selectList.refs.queryEditor.setText("1 + 1");
+    panel.selectList.getQueryEditor().setText("1 + 1");
     await panel.execute();
 
     // A history records what happened: two runs are two entries, each with its
@@ -57,7 +57,7 @@ describe("jupyter-prompt panel", () => {
     panel.selectList.show();
     panel.addToHistory("first");
     panel.addToHistory("second");
-    const editor = panel.selectList.refs.queryEditor.element;
+    const editor = panel.selectList.getQueryEditor().element;
     const selected = () => panel.selectList.getSelectedItem()?.code ?? null;
 
     // Down walks in from the prompt, top to bottom...
@@ -86,7 +86,7 @@ describe("jupyter-prompt panel", () => {
     panel.addToHistory("print(value)");
     panel.addToHistory("import numpy");
 
-    panel.selectList.refs.queryEditor.setText("num");
+    panel.selectList.getQueryEditor().setText("num");
     await panel.selectList.update({});
 
     expect(panel.selectList.items.map((entry) => entry.code)).toEqual(["import numpy"]);
@@ -101,7 +101,7 @@ describe("jupyter-prompt panel", () => {
 
   it("badges each row with its age and outcome on the right, outcome outermost", async () => {
     execResult = { status: "error", error: { ename: "NameError", evalue: "x" } };
-    panel.selectList.refs.queryEditor.setText("x");
+    panel.selectList.getQueryEditor().setText("x");
     await panel.execute();
     await panel.selectList.update({});
 
@@ -133,7 +133,7 @@ describe("jupyter-prompt panel", () => {
   it("confirms an empty selection by executing instead of recalling", () => {
     spyOn(panel, "execute");
     panel.addToHistory("import numpy");
-    panel.selectList.refs.queryEditor.setText("num");
+    panel.selectList.getQueryEditor().setText("num");
 
     panel.selectList.confirmSelection();
 
@@ -147,7 +147,7 @@ describe("jupyter-prompt panel", () => {
     await panel.selectList.selectIndex(0);
 
     lumine.commands.dispatch(
-      panel.selectList.refs.queryEditor.element,
+      panel.selectList.getQueryEditor().element,
       "jupyter-prompt:run-history-entry",
     );
     await panel.selectList.update({});
@@ -158,10 +158,10 @@ describe("jupyter-prompt panel", () => {
 
   it("keeps the history command scoped to a selected entry", () => {
     spyOn(panel, "execute");
-    panel.selectList.refs.queryEditor.setText("1 + 1");
+    panel.selectList.getQueryEditor().setText("1 + 1");
 
     lumine.commands.dispatch(
-      panel.selectList.refs.queryEditor.element,
+      panel.selectList.getQueryEditor().element,
       "jupyter-prompt:run-history-entry",
     );
 
@@ -170,10 +170,10 @@ describe("jupyter-prompt panel", () => {
 
   it("runs the typed prompt through its semantic command", () => {
     spyOn(panel, "execute");
-    panel.selectList.refs.queryEditor.setText("1 + 1");
+    panel.selectList.getQueryEditor().setText("1 + 1");
 
     lumine.commands.dispatch(
-      panel.selectList.refs.queryEditor.element,
+      panel.selectList.getQueryEditor().element,
       "jupyter-prompt:run-prompt",
     );
 
@@ -212,7 +212,7 @@ describe("jupyter-prompt panel", () => {
 
   it("recalls nothing when no entry is selected", () => {
     panel.addToHistory("import numpy");
-    panel.selectList.refs.queryEditor.setText("num");
+    panel.selectList.getQueryEditor().setText("num");
 
     panel.recallSelection();
 
@@ -222,7 +222,7 @@ describe("jupyter-prompt panel", () => {
   it("executes the query, closes the panel, and restores the full history view", async () => {
     jasmine.attachToDOM(lumine.views.getView(lumine.workspace));
     panel.selectList.show();
-    panel.selectList.refs.queryEditor.setText("1 + 1");
+    panel.selectList.getQueryEditor().setText("1 + 1");
 
     await panel.execute();
 
@@ -244,7 +244,7 @@ describe("jupyter-prompt panel", () => {
     jasmine.attachToDOM(lumine.views.getView(lumine.workspace));
     kernel = null;
     panel.selectList.show();
-    panel.selectList.refs.queryEditor.setText("1 + 1");
+    panel.selectList.getQueryEditor().setText("1 + 1");
 
     await panel.execute();
 
@@ -258,7 +258,7 @@ describe("jupyter-prompt panel", () => {
 
   it("records a failed execution on its history entry", async () => {
     execResult = { status: "error", error: { ename: "NameError", evalue: "x" } };
-    panel.selectList.refs.queryEditor.setText("x");
+    panel.selectList.getQueryEditor().setText("x");
 
     await panel.execute();
 
