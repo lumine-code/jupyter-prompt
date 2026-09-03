@@ -23,15 +23,16 @@ describe("jupyter-prompt item actions", () => {
   });
 
   it("switches the displayed Enter action between history and the typed prompt", async () => {
+    await panel.selectList.show();
     panel.addToHistory("import numpy");
     await panel.selectList.selectIndex(0);
-    let actions = panel.selectList.itemActions();
+    let actions = panel.selectList.getAvailableActions();
     let byCommand = new Map(actions.map((action) => [action.command, action]));
 
     const run = byCommand.get("jupyter-prompt:run-history-entry");
     expect(run.name).toBe("Run History Entry");
     expect(run.description).toBe("Run the selected entry and close the panel.");
-    expect(run.keystrokes).toEqual(["enter"]);
+    expect(run.primary).toBe(true);
 
     const recall = byCommand.get("jupyter-prompt:recall-history-entry");
     expect(recall.name).toBe("Recall History Entry");
@@ -46,18 +47,18 @@ describe("jupyter-prompt item actions", () => {
 
     panel.selectList.getQueryEditor().setText("1 + 1");
     panel.selectList.selectNone();
-    actions = panel.selectList.itemActions();
+    actions = panel.selectList.getAvailableActions();
     byCommand = new Map(actions.map((action) => [action.command, action]));
     expect([...byCommand.keys()]).toEqual(["jupyter-prompt:run-prompt"]);
     expect(byCommand.get("jupyter-prompt:run-prompt").description).toBe(
       "Run the typed prompt and close the panel.",
     );
-    expect(byCommand.get("jupyter-prompt:run-prompt").scope).toBe("list");
-    expect(byCommand.get("jupyter-prompt:run-prompt").keystrokes).toEqual(["enter"]);
+    expect(byCommand.get("jupyter-prompt:run-prompt").context).toBe("dialog");
+    expect(byCommand.get("jupyter-prompt:run-prompt").primary).toBe(true);
 
     panel.selectList.getQueryEditor().setText("   ");
     panel.selectList.selectNone();
-    expect(panel.selectList.itemActions()).toEqual([]);
+    expect(panel.selectList.getAvailableActions()).toEqual([]);
   });
 
   it("leaves Enter bound to the chrome, so it still confirms inside the actions list", () => {
@@ -77,14 +78,11 @@ describe("jupyter-prompt item actions", () => {
     await panel.selectList.selectIndex(0);
     panel.selectList.show();
 
-    await panel.selectList.showItemActions();
+    await panel.selectList.showActions();
     expect(lumine.workspace.getModalTrail()).toEqual(["Prompt History", "Actions"]);
 
-    const index = panel.selectList.itemActionsList.items.findIndex(
-      (item) => item.command === "jupyter-prompt:recall-history-entry",
-    );
-    panel.selectList.itemActionsList.selectIndex(index);
-    panel.selectList.itemActionsList.confirmSelection();
+    lumine.workspace.popModal();
+    await panel.selectList.runAction("jupyter-prompt:recall-history-entry");
 
     expect(panel.selectList.getQuery()).toBe("import numpy");
     expect(panel.selectList.isVisible()).toBeTruthy();
@@ -96,12 +94,9 @@ describe("jupyter-prompt item actions", () => {
     panel.selectList.selectNone();
     const execute = spyOn(panel, "execute");
 
-    await panel.selectList.showItemActions();
-    const index = panel.selectList.itemActionsList.items.findIndex(
-      (item) => item.command === "jupyter-prompt:run-prompt",
-    );
-    panel.selectList.itemActionsList.selectIndex(index);
-    panel.selectList.itemActionsList.confirmSelection();
+    await panel.selectList.showActions();
+    lumine.workspace.popModal();
+    await panel.selectList.runAction("jupyter-prompt:run-prompt");
 
     expect(execute).toHaveBeenCalledTimes(1);
   });

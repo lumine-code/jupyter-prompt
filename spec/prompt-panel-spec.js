@@ -36,7 +36,7 @@ describe("jupyter-prompt panel", () => {
     panel.addToHistory("first");
     panel.addToHistory("second");
 
-    expect(panel.selectList.items.map((entry) => entry.code)).toEqual(["second", "first"]);
+    expect(panel.selectList.getItems().map((entry) => entry.code)).toEqual(["second", "first"]);
     expect(panel.selectList.getSelectedItem()).toBeNull();
   });
 
@@ -50,6 +50,7 @@ describe("jupyter-prompt panel", () => {
     // own outcome and time.
     expect(panel.history.map((entry) => entry.code)).toEqual(["1 + 1", "1 + 1"]);
     expect(panel.history[0]).not.toBe(panel.history[1]);
+    expect(panel.history[0].id).not.toBe(panel.history[1].id);
   });
 
   it("returns to the prompt when a move steps off either end of the history", async () => {
@@ -87,13 +88,15 @@ describe("jupyter-prompt panel", () => {
     panel.addToHistory("import numpy");
 
     panel.selectList.getQueryEditor().setText("num");
-    await panel.selectList.update({});
+    await panel.selectList.refresh();
 
-    expect(panel.selectList.items.map((entry) => entry.code)).toEqual(["import numpy"]);
+    expect(panel.selectList.getDisplayedItems().map((entry) => entry.code)).toEqual([
+      "import numpy",
+    ]);
     expect(panel.selectList.getSelectedItem()).toBeNull();
 
     const matched = Array.from(
-      panel.selectList.refs.items.querySelectorAll(".character-match"),
+      panel.selectList.getElement().querySelectorAll(".list-group .character-match"),
       (el) => el.textContent,
     );
     expect(matched.join("")).toBe("num");
@@ -103,9 +106,9 @@ describe("jupyter-prompt panel", () => {
     execResult = { status: "error", error: { ename: "NameError", evalue: "x" } };
     panel.selectList.getQueryEditor().setText("x");
     await panel.execute();
-    await panel.selectList.update({});
+    await panel.selectList.refresh();
 
-    const row = panel.selectList.refs.items.querySelector(".prompt-history-item");
+    const row = panel.selectList.getElement().querySelector(".prompt-history-item");
     const trailing = row.querySelector(".trailing-block");
     const status = trailing.querySelector(".prompt-status");
     const time = trailing.querySelector(".prompt-time");
@@ -123,19 +126,19 @@ describe("jupyter-prompt panel", () => {
     // Built through dayjs so it reads the same clock the panel does — the spec
     // runner's is not the wall clock.
     panel.history[0].timestamp = dayjs().subtract(2, "minute").toDate();
-    await panel.selectList.update({ items: panel.history });
+    await panel.selectList.setItems(panel.history);
 
-    const time = panel.selectList.refs.items.querySelector(".prompt-time");
+    const time = panel.selectList.getElement().querySelector(".prompt-time");
 
     expect(time.textContent).toBe("2 minutes ago");
   });
 
-  it("confirms an empty selection by executing instead of recalling", () => {
+  it("confirms an empty selection by executing instead of recalling", async () => {
     spyOn(panel, "execute");
     panel.addToHistory("import numpy");
     panel.selectList.getQueryEditor().setText("num");
 
-    panel.selectList.confirmSelection();
+    await panel.selectList.confirmSelection();
 
     expect(panel.execute).toHaveBeenCalled();
   });
@@ -146,21 +149,21 @@ describe("jupyter-prompt panel", () => {
     panel.addToHistory("import numpy");
     await panel.selectList.selectIndex(0);
 
-    lumine.commands.dispatch(
+    await lumine.commands.dispatch(
       panel.selectList.getQueryEditor().element,
       "jupyter-prompt:run-history-entry",
     );
-    await panel.selectList.update({});
+    await panel.selectList.refresh();
 
     expect(executedCodes).toEqual(["import numpy"]);
     expect(panel.selectList.isVisible()).toBeFalsy();
   });
 
-  it("keeps the history command scoped to a selected entry", () => {
+  it("keeps the history command scoped to a selected entry", async () => {
     spyOn(panel, "execute");
     panel.selectList.getQueryEditor().setText("1 + 1");
 
-    lumine.commands.dispatch(
+    await lumine.commands.dispatch(
       panel.selectList.getQueryEditor().element,
       "jupyter-prompt:run-history-entry",
     );
@@ -168,11 +171,11 @@ describe("jupyter-prompt panel", () => {
     expect(panel.execute).not.toHaveBeenCalled();
   });
 
-  it("runs the typed prompt through its semantic command", () => {
+  it("runs the typed prompt through its semantic command", async () => {
     spyOn(panel, "execute");
     panel.selectList.getQueryEditor().setText("1 + 1");
 
-    lumine.commands.dispatch(
+    await lumine.commands.dispatch(
       panel.selectList.getQueryEditor().element,
       "jupyter-prompt:run-prompt",
     );
@@ -186,8 +189,8 @@ describe("jupyter-prompt panel", () => {
     panel.addToHistory("import numpy");
     await panel.selectList.selectIndex(0);
 
-    panel.selectList.confirmSelection();
-    await panel.selectList.update({});
+    await panel.selectList.confirmSelection();
+    await panel.selectList.refresh();
 
     expect(executedCodes).toEqual(["import numpy"]);
     expect(panel.selectList.isVisible()).toBeFalsy();
@@ -207,7 +210,9 @@ describe("jupyter-prompt panel", () => {
     // it was recalled from. The recalled code matches itself, so the entry
     // stays visible.
     expect(panel.selectList.getSelectedItem()).toBeNull();
-    expect(panel.selectList.items.map((entry) => entry.code)).toEqual(["import numpy"]);
+    expect(panel.selectList.getDisplayedItems().map((entry) => entry.code)).toEqual([
+      "import numpy",
+    ]);
   });
 
   it("recalls nothing when no entry is selected", () => {
@@ -232,7 +237,7 @@ describe("jupyter-prompt panel", () => {
     // entry does: the point of running it is to see its output. The prompt
     // goes with it, so the next open lists the whole history.
     expect(panel.selectList.isVisible()).toBeFalsy();
-    expect(panel.selectList.items).toEqual(panel.history);
+    expect(panel.selectList.getItems()).toEqual(panel.history);
 
     // And the next open lists all of it rather than staying filtered to the
     // thing just run, because the list clears its query whenever it opens.
