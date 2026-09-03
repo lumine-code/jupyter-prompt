@@ -23,7 +23,7 @@ describe("jupyter-prompt item actions", () => {
   });
 
   it("switches the displayed Enter action between history and the typed prompt", async () => {
-    await panel.selectList.show();
+    await panel.selectListHost.show();
     panel.addToHistory("import numpy");
     await panel.selectList.selectIndex(0);
     let actions = panel.selectList.getAvailableActions();
@@ -65,6 +65,7 @@ describe("jupyter-prompt item actions", () => {
     // The actions list wears the panel's own classes, so a package binding on
     // Enter would follow it in and run a history entry instead of the action
     // under the cursor. The panel binds nothing on Enter for that reason.
+    panel.selectListHost.getPanel();
     const bindings = lumine.keymaps.findKeyBindings({
       keystrokes: "enter",
       target: panel.selectList.getQueryEditor().element,
@@ -75,26 +76,26 @@ describe("jupyter-prompt item actions", () => {
 
   it("runs the action against the panel's selection", async () => {
     panel.addToHistory("import numpy");
+    panel.selectListHost.show();
     await panel.selectList.selectIndex(0);
-    panel.selectList.show();
 
-    await panel.selectList.showActions();
+    await panel.selectListHost.showActions();
     expect(lumine.workspace.getModalTrail()).toEqual(["Prompt History", "Actions"]);
 
     lumine.workspace.popModal();
     await panel.selectList.runAction("jupyter-prompt:recall-history-entry");
 
     expect(panel.selectList.getQuery()).toBe("import numpy");
-    expect(panel.selectList.isVisible()).toBeTruthy();
+    expect(panel.selectListHost.isVisible()).toBeTruthy();
   });
 
   it("runs the typed-prompt action once", async () => {
-    panel.selectList.show();
+    panel.selectListHost.show();
     panel.selectList.getQueryEditor().setText("1 + 1");
     panel.selectList.selectNone();
     const execute = spyOn(panel, "execute");
 
-    await panel.selectList.showActions();
+    await panel.selectListHost.showActions();
     lumine.workspace.popModal();
     await panel.selectList.runAction("jupyter-prompt:run-prompt");
 

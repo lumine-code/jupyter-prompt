@@ -55,7 +55,7 @@ describe("jupyter-prompt panel", () => {
 
   it("returns to the prompt when a move steps off either end of the history", async () => {
     jasmine.attachToDOM(lumine.views.getView(lumine.workspace));
-    panel.selectList.show();
+    panel.selectListHost.show();
     panel.addToHistory("first");
     panel.addToHistory("second");
     const editor = panel.selectList.getQueryEditor().element;
@@ -145,7 +145,7 @@ describe("jupyter-prompt panel", () => {
 
   it("runs the selection through its own command, so the key is an action", async () => {
     jasmine.attachToDOM(lumine.views.getView(lumine.workspace));
-    panel.selectList.show();
+    panel.selectListHost.show();
     panel.addToHistory("import numpy");
     await panel.selectList.selectIndex(0);
 
@@ -156,7 +156,7 @@ describe("jupyter-prompt panel", () => {
     await panel.selectList.refresh();
 
     expect(executedCodes).toEqual(["import numpy"]);
-    expect(panel.selectList.isVisible()).toBeFalsy();
+    expect(panel.selectListHost.isVisible()).toBeFalsy();
   });
 
   it("keeps the history command scoped to a selected entry", async () => {
@@ -173,6 +173,7 @@ describe("jupyter-prompt panel", () => {
 
   it("runs the typed prompt through its semantic command", async () => {
     spyOn(panel, "execute");
+    panel.selectListHost.getPanel();
     panel.selectList.getQueryEditor().setText("1 + 1");
 
     await lumine.commands.dispatch(
@@ -185,7 +186,7 @@ describe("jupyter-prompt panel", () => {
 
   it("re-runs a confirmed entry and closes the panel", async () => {
     jasmine.attachToDOM(lumine.views.getView(lumine.workspace));
-    panel.selectList.show();
+    panel.selectListHost.show();
     panel.addToHistory("import numpy");
     await panel.selectList.selectIndex(0);
 
@@ -193,7 +194,7 @@ describe("jupyter-prompt panel", () => {
     await panel.selectList.refresh();
 
     expect(executedCodes).toEqual(["import numpy"]);
-    expect(panel.selectList.isVisible()).toBeFalsy();
+    expect(panel.selectListHost.isVisible()).toBeFalsy();
     // The re-run is logged in its own right, above the entry it came from.
     expect(panel.history.map((entry) => entry.code)).toEqual(["import numpy", "import numpy"]);
   });
@@ -226,7 +227,7 @@ describe("jupyter-prompt panel", () => {
 
   it("executes the query, closes the panel, and restores the full history view", async () => {
     jasmine.attachToDOM(lumine.views.getView(lumine.workspace));
-    panel.selectList.show();
+    panel.selectListHost.show();
     panel.selectList.getQueryEditor().setText("1 + 1");
 
     await panel.execute();
@@ -236,19 +237,19 @@ describe("jupyter-prompt panel", () => {
     // Running typed code closes the panel for the same reason re-running an
     // entry does: the point of running it is to see its output. The prompt
     // goes with it, so the next open lists the whole history.
-    expect(panel.selectList.isVisible()).toBeFalsy();
+    expect(panel.selectListHost.isVisible()).toBeFalsy();
     expect(panel.selectList.getItems()).toEqual(panel.history);
 
     // And the next open lists all of it rather than staying filtered to the
     // thing just run, because the list clears its query whenever it opens.
-    panel.selectList.show();
+    panel.selectListHost.show();
     expect(panel.selectList.getQuery()).toBe("");
   });
 
   it("keeps the panel and the typed code when there is no kernel to run on", async () => {
     jasmine.attachToDOM(lumine.views.getView(lumine.workspace));
     kernel = null;
-    panel.selectList.show();
+    panel.selectListHost.show();
     panel.selectList.getQueryEditor().setText("1 + 1");
 
     await panel.execute();
@@ -256,7 +257,7 @@ describe("jupyter-prompt panel", () => {
     expect(lumine.notifications.getNotifications().map((n) => n.getMessage())).toEqual([
       "No kernel running",
     ]);
-    expect(panel.selectList.isVisible()).toBeTruthy();
+    expect(panel.selectListHost.isVisible()).toBeTruthy();
     expect(panel.selectList.getQuery()).toBe("1 + 1");
     expect(panel.history).toEqual([]);
   });
