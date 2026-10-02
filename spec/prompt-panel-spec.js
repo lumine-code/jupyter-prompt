@@ -271,4 +271,48 @@ describe("jupyter-prompt panel", () => {
     expect(panel.history[0].status).toBe("error");
     expect(panel.history[0].error).toEqual({ ename: "NameError", evalue: "x" });
   });
+
+  it("records a rejected execution instead of leaving its history entry running", async () => {
+    kernel.execute = () => Promise.reject(new Error("Kernel connection lost"));
+    await panel.run("work()");
+    expect(panel.history[0].status).toBe("error");
+    expect(panel.history[0].error.evalue).toBe("Kernel connection lost");
+  });
+
+  it("records a synchronous failure from a revoked kernel wrapper", async () => {
+    kernel.execute = () => {
+      throw new Error("Kernel wrapper destroyed");
+    };
+    await panel.run("work()");
+    expect(panel.history[0].status).toBe("error");
+    expect(panel.history[0].error.evalue).toBe("Kernel wrapper destroyed");
+  });
+
+  it("does not render a late result after the prompt is destroyed", async () => {
+    let resolve;
+    kernel.execute = () =>
+      new Promise((res) => {
+        resolve = res;
+      });
+    const execution = panel.run("work()");
+    panel.destroy();
+    const update = spyOn(panel.selectList, "setItems");
+    resolve({ status: "ok" });
+    await execution;
+    expect(update).not.toHaveBeenCalled();
+    expect(panel.history[0].status).toBe("ok");
+  });
+
+  it("does not send code after destruction", async () => {
+    panel.destroy();
+    await panel.run("side_effect()");
+    expect(executedCodes).toEqual([]);
+  });
+
+  it("shows an aborted execution as failed rather than still running", async () => {
+    execResult = { status: "aborted" };
+    await panel.run("work()");
+    expect(panel.history[0].status).toBe("error");
+    expect(panel.history[0].error.evalue).toContain("aborted");
+  });
 });
