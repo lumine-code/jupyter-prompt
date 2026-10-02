@@ -29,4 +29,22 @@ describe("prompt provider lifetime", () => {
       replacement.dispose();
     }
   });
+
+  it("keeps a new lease of the same provider when its old lease is disposed", async () => {
+    const getActiveKernel = jasmine.createSpy("getActiveKernel").and.returnValue(null);
+    const provider = { getActiveKernel };
+    const first = main.consumeJupyterKernel(provider);
+    const replacement = main.consumeJupyterKernel(provider);
+    const createList = spyOn(lumine.workspace, "addSelectList").and.callThrough();
+    try {
+      first.dispose();
+      lumine.commands.dispatch(lumine.views.getView(lumine.workspace), "jupyter-prompt:toggle");
+      const list = createList.calls.mostRecent().returnValue.getModel();
+      list.getQueryEditor().setText("work()");
+      await list.runAction("jupyter-prompt:run-prompt");
+      expect(getActiveKernel).toHaveBeenCalled();
+    } finally {
+      replacement.dispose();
+    }
+  });
 });
