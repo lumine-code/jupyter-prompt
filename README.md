@@ -2,36 +2,7 @@
 
 Run code on the current kernel from a prompt with history.
 
-A modal prompt over the running kernel: execute typed code where your inline results already go. The list under the prompt is the session's history, newest first — filter it like any picker, re-run an entry, or recall one into the prompt to edit before running.
-
-## Features
-
-- **Interactive prompt**: run one-off code — imports, magics, quick checks — without touching the file.
-- **Session history**: every run is its own entry with its outcome and age; running the same code twice records twice.
-- **Re-run or recall**: re-run a selected entry or recall it into the prompt for editing first.
-- **Outcome badges**: each entry carries ok, error (including connection failures, with the exception as its tooltip), or still-running.
-- **Current kernel, always**: the prompt asks at run time, so it follows the active editor's kernel.
-
-## Installation
-
-To install `jupyter-prompt` search for it in the Install pane of the Lumine settings, or run the command `lumine --install lumine-code/jupyter-prompt`.
-
-## Commands
-
-Commands available in `lumine-workspace`:
-
-- `jupyter-prompt:toggle`: open or close the prompt.
-
-Commands available in `.jupyter-prompt`:
-
-- `jupyter-prompt:run-prompt`: run the typed prompt and close the panel,
-- `jupyter-prompt:run-history-entry`: run the selected entry and close the panel,
-- `jupyter-prompt:recall-history-entry`: put the selected entry back in the prompt to edit before running it.
-
-## Services
-
-- `jupyter.kernel`: consumed to execute code on the active editor's kernel.
-- `background-tips.provider`: provided to show a tip about the prompt in an empty workspace.
+This package has been integrated into jupyter-repl. Install jupyter-repl to use its prompt, session history and kernel monitor. This repository is retired; development continues in https://github.com/lumine-code/jupyter-repl.
 
 ## Contributing
 
