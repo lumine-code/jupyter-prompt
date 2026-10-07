@@ -1,25 +1,24 @@
-const path = require("path");
 const PromptPanel = require("../lib/prompt-panel");
+const path = require("node:path");
 
-// Activate by path, not by name: resolving the name would need this checkout
-// linked into the packages directory, which is a property of whoever runs the
-// suite rather than of the suite.
-const PACKAGE_PATH = path.join(__dirname, "..");
-
-describe("jupyter-prompt item actions", () => {
+describe("Jupyter prompt item actions", () => {
   let panel;
 
-  beforeEach(async () => {
+  let keymaps;
+  beforeEach(() => {
     jasmine.attachToDOM(lumine.views.getView(lumine.workspace));
-    const activation = lumine.packages.activatePackage(PACKAGE_PATH);
-    lumine.commands.dispatch(lumine.views.getView(lumine.workspace), "jupyter-prompt:toggle");
-    await activation;
-    panel = new PromptPanel(() => null);
+    keymaps = lumine.keymaps.add(
+      "jupyter-prompt-tests",
+      lumine.keymaps.readKeymap(path.resolve(__dirname, "../keymaps/main.json")),
+    );
+    panel = new PromptPanel(
+      () => null,
+      () => Promise.resolve({ accepted: false, done: Promise.resolve({ status: "unavailable" }) }),
+    );
   });
-
-  afterEach(async () => {
+  afterEach(() => {
     panel.destroy();
-    await lumine.packages.deactivatePackage("jupyter-prompt");
+    keymaps.dispose();
   });
 
   it("switches the displayed Enter action between history and the typed prompt", async () => {
@@ -43,7 +42,7 @@ describe("jupyter-prompt item actions", () => {
 
     // Chrome and the workspace-level toggle stay out.
     expect(byCommand.has("core:confirm")).toBe(false);
-    expect(byCommand.has("jupyter-prompt:toggle")).toBe(false);
+    expect(byCommand.has("jupyter-prompt:toggle-focus")).toBe(false);
 
     panel.selectList.getQueryEditor().setText("1 + 1");
     panel.selectList.selectNone();

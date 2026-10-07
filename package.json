@@ -18,6 +18,10 @@
   "engines": {
     "lumine": "^1.0.0"
   },
+  "specPackages": [
+    "jupyter-repl",
+    "language-python"
+  ],
   "main": "./lib/main",
   "files": [
     "keymaps",
@@ -39,9 +43,6 @@
       }
     }
   },
-  "dependencies": {
-    "dayjs": "^1.11.23"
-  },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^10.11.0",
@@ -53,6 +54,11 @@
     "jupyter.kernel": {
       "versions": {
         "^1.0.0": "consumeJupyterKernel"
+      }
+    },
+    "jupyter.execution": {
+      "versions": {
+        "^1.0.0": "consumeJupyterExecution"
       }
     }
   }

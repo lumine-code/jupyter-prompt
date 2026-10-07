@@ -20,7 +20,10 @@ describe("prompt provider lifetime", () => {
     const createList = spyOn(lumine.workspace, "addSelectList").and.callThrough();
     try {
       first.dispose();
-      lumine.commands.dispatch(lumine.views.getView(lumine.workspace), "jupyter-prompt:toggle");
+      lumine.commands.dispatch(
+        lumine.views.getView(lumine.workspace),
+        "jupyter-prompt:toggle-focus",
+      );
       const list = createList.calls.mostRecent().returnValue.getModel();
       list.getQueryEditor().setText("work()");
       await list.runAction("jupyter-prompt:run-prompt");
@@ -38,7 +41,10 @@ describe("prompt provider lifetime", () => {
     const createList = spyOn(lumine.workspace, "addSelectList").and.callThrough();
     try {
       first.dispose();
-      lumine.commands.dispatch(lumine.views.getView(lumine.workspace), "jupyter-prompt:toggle");
+      lumine.commands.dispatch(
+        lumine.views.getView(lumine.workspace),
+        "jupyter-prompt:toggle-focus",
+      );
       const list = createList.calls.mostRecent().returnValue.getModel();
       list.getQueryEditor().setText("work()");
       await list.runAction("jupyter-prompt:run-prompt");

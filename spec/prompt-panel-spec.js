@@ -1,31 +1,29 @@
-const dayjs = require("dayjs");
-const relativeTime = require("dayjs/plugin/relativeTime");
 const PromptPanel = require("../lib/prompt-panel");
-
-dayjs.extend(relativeTime);
 
 // The prompt is a REPL prompt on top of a select list: the query editor
 // holds code to execute, and the list below is the execution history. The
 // history filters like every other picker, but nothing is auto-selected, so
 // Enter executes the typed code unless a row was chosen explicitly, in which
 // case it re-runs that row.
-describe("jupyter-prompt panel", () => {
+describe("Jupyter prompt panel", () => {
   let panel;
   let kernel;
   let executedCodes;
   let execResult;
+  let executePrompt;
 
   beforeEach(() => {
     executedCodes = [];
     execResult = { status: "ok" };
-    // The wrapper surface `jupyter.kernel` hands over: execute and a promise.
-    kernel = {
-      execute: (code) => {
-        executedCodes.push(code);
-        return Promise.resolve(execResult);
-      },
+    kernel = { id: "session-python" };
+    executePrompt = (code) => {
+      executedCodes.push(code);
+      return Promise.resolve({ accepted: true, done: Promise.resolve(execResult) });
     };
-    panel = new PromptPanel(() => kernel);
+    panel = new PromptPanel(
+      () => kernel,
+      (code, session) => executePrompt(code, session),
+    );
   });
 
   afterEach(() => {
@@ -116,21 +114,25 @@ describe("jupyter-prompt panel", () => {
     expect(status.classList.contains("badge-error")).toBe(true);
     expect(status.classList.contains("icon-x")).toBe(true);
     expect(status.title).toBe("NameError: x");
-    expect(time.textContent).toBe(dayjs(panel.history[0].timestamp).fromNow());
+    expect(time.textContent).toBe(
+      new Intl.RelativeTimeFormat(undefined, { numeric: "auto" }).format(0, "second"),
+    );
     // The outcome holds the right edge, with the age inside it.
     expect(Array.from(trailing.children)).toEqual([time, status]);
   });
 
   it("dates an entry by how long ago it ran, not by the clock", async () => {
     panel.addToHistory("import numpy");
-    // Built through dayjs so it reads the same clock the panel does — the spec
+    // Read the same clock the panel uses, so the spec
     // runner's is not the wall clock.
-    panel.history[0].timestamp = dayjs().subtract(2, "minute").toDate();
+    panel.history[0].timestamp = new Date(Date.now() - 120000);
     await panel.selectList.setItems(panel.history);
 
     const time = panel.selectList.getElement().querySelector(".prompt-time");
 
-    expect(time.textContent).toBe("2 minutes ago");
+    expect(time.textContent).toBe(
+      new Intl.RelativeTimeFormat(undefined, { numeric: "auto" }).format(-2, "minute"),
+    );
   });
 
   it("confirms an empty selection by executing instead of recalling", async () => {
@@ -255,7 +257,7 @@ describe("jupyter-prompt panel", () => {
     await panel.execute();
 
     expect(lumine.notifications.getNotifications().map((n) => n.getMessage())).toEqual([
-      "No kernel running",
+      "Start or select a Jupyter kernel before running the prompt.",
     ]);
     expect(panel.selectListHost.isVisible()).toBeTruthy();
     expect(panel.selectList.getQuery()).toBe("1 + 1");
@@ -273,14 +275,14 @@ describe("jupyter-prompt panel", () => {
   });
 
   it("records a rejected execution instead of leaving its history entry running", async () => {
-    kernel.execute = () => Promise.reject(new Error("Kernel connection lost"));
+    executePrompt = () => Promise.reject(new Error("Kernel connection lost"));
     await panel.run("work()");
     expect(panel.history[0].status).toBe("error");
     expect(panel.history[0].error.evalue).toBe("Kernel connection lost");
   });
 
   it("records a synchronous failure from a revoked kernel wrapper", async () => {
-    kernel.execute = () => {
+    executePrompt = () => {
       throw new Error("Kernel wrapper destroyed");
     };
     await panel.run("work()");
@@ -290,14 +292,14 @@ describe("jupyter-prompt panel", () => {
 
   it("does not render a late result after the prompt is destroyed", async () => {
     let resolve;
-    kernel.execute = () =>
+    executePrompt = () =>
       new Promise((res) => {
         resolve = res;
       });
     const execution = panel.run("work()");
     panel.destroy();
     const update = spyOn(panel.selectList, "setItems");
-    resolve({ status: "ok" });
+    resolve({ accepted: true, done: Promise.resolve({ status: "ok" }) });
     await execution;
     expect(update).not.toHaveBeenCalled();
     expect(panel.history[0].status).toBe("ok");
@@ -309,10 +311,10 @@ describe("jupyter-prompt panel", () => {
     expect(executedCodes).toEqual([]);
   });
 
-  it("shows an aborted execution as failed rather than still running", async () => {
-    execResult = { status: "aborted" };
+  it("records an unknown execution outcome distinctly from a kernel error", async () => {
+    execResult = { status: "unknown" };
     await panel.run("work()");
-    expect(panel.history[0].status).toBe("error");
-    expect(panel.history[0].error.evalue).toContain("aborted");
+    expect(panel.history[0].status).toBe("unknown");
+    expect(panel.history[0].error.evalue).toContain("unknown");
   });
 });

@@ -5,7 +5,7 @@
       "submenu": [
         {
           "label": "Jupyter Prompt",
-          "submenu": [{ "label": "Toggle Prompt", "command": "jupyter-prompt:toggle" }]
+          "submenu": [{ "label": "Focus Prompt", "command": "jupyter-prompt:toggle-focus" }]
         }
       ]
     }
