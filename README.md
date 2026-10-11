@@ -2,7 +2,7 @@
 
 Run code on the current kernel from a prompt with history.
 
-The prompt captures the selected session when a run starts and sends code through jupyter-repl's shared execution service. Its modal editor and history belong to this package, so replacing the runtime services does not discard typed code or recorded attempts.
+The prompt captures the selected session when a run starts and sends code through jupyter-repl's shared execution service. Its modal editor and history belong to this package, so replacing the runtime services does not discard typed code or recorded attempts. Each service uses its latest live connection; withdrawing it restores an earlier connection while accepted work stays with its captured session.
 
 ## Features
 
