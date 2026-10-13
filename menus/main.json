@@ -1,11 +1,30 @@
 {
   "menu": [
     {
+      "label": "View",
+      "submenu": [
+        {
+          "label": "Open View",
+          "submenu": [
+            {
+              "label": "Jupyter Prompt",
+              "command": "jupyter-prompt:toggle-focus"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "label": "Packages",
       "submenu": [
         {
           "label": "Jupyter Prompt",
-          "submenu": [{ "label": "Focus Prompt", "command": "jupyter-prompt:toggle-focus" }]
+          "submenu": [
+            {
+              "label": "Focus Prompt",
+              "command": "jupyter-prompt:toggle-focus"
+            }
+          ]
         }
       ]
     }
