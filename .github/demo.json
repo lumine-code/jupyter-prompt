@@ -1,0 +1,16 @@
+{
+  "title": "jupyter-prompt",
+  "description": "Run a Python expression from the prompt and review the execution history.",
+  "recordedOn": "2026-10-13",
+  "sourceRevision": "94b422d41801cbbe84927c6371fe06252852dfc6",
+  "mode": "normal",
+  "fontSettings": "default",
+  "images": [
+    {
+      "file": "demo.png",
+      "label": "Run a Python expression from the prompt and review the execution history.",
+      "width": 1200,
+      "height": 760
+    }
+  ]
+}

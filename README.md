@@ -13,6 +13,8 @@ The prompt captures the selected session when a run starts and sends code throug
 - **Shared results**: display output through the runtime's common output dock and rendering pipeline.
 - **Owned observations**: close the package's observation on deactivation without interrupting accepted kernel work or retrying an unknown outcome.
 
+![Run a Python expression from the prompt and review the execution history.](.github/demo.png)
+
 ## Installation
 
 To install `jupyter-prompt` search for it in the Install pane of the Lumine settings, or run the command `lumine --install lumine-code/jupyter-prompt`.
