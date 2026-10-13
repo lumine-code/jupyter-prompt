@@ -2,9 +2,10 @@
   "title": "jupyter-prompt",
   "description": "Run a Python expression from the prompt and review the execution history.",
   "recordedOn": "2026-10-13",
-  "sourceRevision": "94b422d41801cbbe84927c6371fe06252852dfc6",
+  "sourceRevision": "ca833194bb2eb4f6ec7f420ab78d6df8e9908e5b",
   "mode": "normal",
   "fontSettings": "default",
+  "themeSourceRevision": "6564a9e21899b5541e9c8f8006f9be6d6d72e6ad",
   "images": [
     {
       "file": "demo.png",
