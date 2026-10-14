@@ -4,11 +4,13 @@
       "label": "View",
       "submenu": [
         {
-          "label": "Open View",
+          "label": "Jupyter",
           "submenu": [
             {
-              "label": "Jupyter Prompt",
-              "command": "jupyter-prompt:toggle-focus"
+              "label": "Toggle Prompt",
+              "command": "jupyter-prompt:toggle-focus",
+              "group": "toggle",
+              "order": 20
             }
           ]
         }
