@@ -50,13 +50,18 @@ module.exports = {
           lumine.commands.dispatch(lumine.workspace.getElement(), "jupyter-prompt:toggle-focus");
           const p = lumine.packages.getActivePackage("jupyter-prompt").mainModule.getPromptPanel();
           await p.run("round(mean, 2)");
-          await new Promise((r) => setTimeout(r, 900));
-          p.toggleFocus();
+          state.prompt = p;
+          state.editor.setCursorBufferPosition([state.editor.getLastBufferRow(), 0]);
         }
       },
-      ready() {
-        return Boolean(
-          document.querySelector(".jupyter-prompt")?.innerText.includes("round(mean, 2)"),
+      async afterPointerMove({ state }) {
+        await state.prompt.selectListHost.show();
+      },
+      ready({ state }) {
+        return (
+          state.prompt.selectListHost.isVisible() &&
+          state.prompt.selectList.getElement().getBoundingClientRect().height > 0 &&
+          state.prompt.selectList.getElement().innerText.includes("round(mean, 2)")
         );
       },
     },
