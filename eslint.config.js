@@ -4,7 +4,7 @@ const prettier = require("eslint-config-prettier");
 
 module.exports = [
   {
-    ignores: ["node_modules/**", ".dev/**"],
+    ignores: ["node_modules/**", ".dev/**", "demo/**"],
   },
   js.configs.recommended,
   {
