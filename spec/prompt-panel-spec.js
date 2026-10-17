@@ -218,6 +218,41 @@ describe("Jupyter prompt panel", () => {
     ]);
   });
 
+  it("keeps typed and history executions available for repeated use", async () => {
+    jasmine.attachToDOM(lumine.workspace.getElement());
+    await panel.selectListHost.show();
+    await panel.selectList.runAction("select-list:toggle-keep-open");
+    await panel.selectList.setQuery("1 + 1");
+    await panel.selectList.selectNone();
+    await panel.selectList.runAction("jupyter-prompt:run-prompt");
+
+    expect(panel.selectListHost.isVisible()).toBe(true);
+    await panel.selectList.selectItem(panel.history[0]);
+    await panel.selectList.runAction("jupyter-prompt:run-history-entry");
+
+    expect(executedCodes).toEqual(["1 + 1", "1 + 1"]);
+    expect(panel.selectListHost.isVisible()).toBe(true);
+    expect(panel.history.every((entry) => entry.status === "ok")).toBe(true);
+  });
+
+  it("uses the captured closing mode when execution acceptance arrives later", async () => {
+    jasmine.attachToDOM(lumine.workspace.getElement());
+    let accept;
+    executePrompt = () => new Promise((resolve) => (accept = resolve));
+    await panel.selectListHost.show();
+    await panel.selectList.runAction("select-list:toggle-keep-open");
+    await panel.selectList.setQuery("pending()");
+    const running = panel.selectList.runAction("jupyter-prompt:run-prompt");
+    for (let tick = 0; tick < 20 && !accept; tick++) await Promise.resolve();
+    expect(accept).toEqual(jasmine.any(Function));
+    await panel.selectList.setKeepOpen(false);
+    accept({ accepted: true, done: Promise.resolve({ status: "ok" }) });
+    await running;
+
+    expect(panel.selectListHost.isVisible()).toBe(true);
+    expect(panel.history[0].status).toBe("ok");
+  });
+
   it("recalls nothing when no entry is selected", () => {
     panel.addToHistory("import numpy");
     panel.selectList.getQueryEditor().setText("num");

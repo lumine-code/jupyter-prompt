@@ -30,7 +30,7 @@ describe("Jupyter prompt item actions", () => {
 
     const run = byCommand.get("jupyter-prompt:run-history-entry");
     expect(run.name).toBe("Run History Entry");
-    expect(run.description).toBe("Run the selected entry and close the panel.");
+    expect(run.description).toBe("Run the selected entry on the current kernel.");
     expect(run.primary).toBe(true);
 
     const recall = byCommand.get("jupyter-prompt:recall-history-entry");
@@ -48,16 +48,21 @@ describe("Jupyter prompt item actions", () => {
     panel.selectList.selectNone();
     actions = panel.selectList.getAvailableActions();
     byCommand = new Map(actions.map((action) => [action.command, action]));
-    expect([...byCommand.keys()]).toEqual(["jupyter-prompt:run-prompt"]);
+    expect([...byCommand.keys()]).toEqual([
+      "jupyter-prompt:run-prompt",
+      "select-list:toggle-keep-open",
+    ]);
     expect(byCommand.get("jupyter-prompt:run-prompt").description).toBe(
-      "Run the typed prompt and close the panel.",
+      "Run the typed prompt on the current kernel.",
     );
     expect(byCommand.get("jupyter-prompt:run-prompt").context).toBe("dialog");
     expect(byCommand.get("jupyter-prompt:run-prompt").primary).toBe(true);
 
     panel.selectList.getQueryEditor().setText("   ");
     panel.selectList.selectNone();
-    expect(panel.selectList.getAvailableActions()).toEqual([]);
+    expect(panel.selectList.getAvailableActions().map((action) => action.command)).toEqual([
+      "select-list:toggle-keep-open",
+    ]);
   });
 
   it("leaves Enter bound to the chrome, so it still confirms inside the actions list", () => {
