@@ -138,7 +138,7 @@ describe("Jupyter prompt panel", () => {
   it("confirms an empty selection by executing instead of recalling", async () => {
     spyOn(panel, "execute");
     panel.addToHistory("import numpy");
-    panel.selectList.getQueryEditor().setText("num");
+    await panel.selectList.setQuery("num");
 
     await panel.selectList.confirmSelection();
 
@@ -205,7 +205,7 @@ describe("Jupyter prompt panel", () => {
     panel.addToHistory("import numpy");
     await panel.selectList.selectIndex(0);
 
-    panel.recallSelection();
+    await panel.recallSelection();
 
     expect(panel.selectList.getQuery()).toBe("import numpy");
     expect(executedCodes).toEqual([]);
