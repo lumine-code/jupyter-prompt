@@ -1,9 +1,9 @@
 {
   "title": "jupyter-prompt",
   "description": "Run a Python expression from the prompt and review the execution history.",
-  "recordedOn": "2026-10-18",
-  "sourceRevision": "8e95acf4bd104f264e9a853ae975064d20603003",
-  "themeSourceRevision": "45b22049e87256e9327beb0b350e67fe81d7fc81",
+  "recordedOn": "2026-10-30",
+  "sourceRevision": "f7a4a5c9f5f679dc5fb07aa01ed85c6968ac1bdb",
+  "themeSourceRevision": "484213c82bbf567e2cb7cd5f85c5d73965346809",
   "mode": "normal",
   "fontSettings": "default",
   "scenario": "demo.js",
@@ -11,8 +11,8 @@
   "environment": {
     "platform": "win32",
     "arch": "x64",
-    "electron": "44.9.0",
-    "chrome": "152.0.7977.167",
+    "electron": "45.0.0",
+    "chrome": "156.0.8078.48",
     "devicePixelRatio": 1,
     "locale": "en-GB",
     "fontFamily": "Fira Code, Menlo, DejaVu Sans Mono, Consolas, monospace",
@@ -24,37 +24,37 @@
   "privacy": { "version": 1, "location": "neutral", "textChecked": true },
   "sources": {
     "editor": {
-      "revision": "10950c83cb6d964aadbcf4036af67c6484c1341d",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "da1fe78142f396c784aa18569cfd04ba7719fb09",
+      "dirty": true,
+      "workingTreeHash": "7739e7077b43ac8e2b3581b9960d1310fd4edee7745e9edf5f347ee8b04dc38a"
     },
     "package": {
-      "revision": "8e95acf4bd104f264e9a853ae975064d20603003",
+      "revision": "f7a4a5c9f5f679dc5fb07aa01ed85c6968ac1bdb",
       "dirty": false,
       "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
     "jupyter-prompt": {
-      "revision": "8e95acf4bd104f264e9a853ae975064d20603003",
+      "revision": "f7a4a5c9f5f679dc5fb07aa01ed85c6968ac1bdb",
       "dirty": false,
       "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
     "jupyter-cells": {
-      "revision": "0cdcdd63e346488bf493c249dc6cbc37a1a7f1b2",
+      "revision": "6adca3701d89f0b206834503a92596bb749cce39",
       "dirty": false,
       "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
     "jupyter-repl": {
-      "revision": "388d56ee73e00e7815e947081aa16a0b1e29af0a",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "9479b49833f5a7e9fce06d173e3fef2a87b23e19",
+      "dirty": true,
+      "workingTreeHash": "f641425a9225f8b2ae24acc0ef51a39ba11d781e8748c7cf0582044f42fa030e"
     },
     "language-python": {
-      "revision": "15672768cff17676d2e79de123e9bcea2317f921",
+      "revision": "413b30e96e3bb63714958c3e3edeca338b0551aa",
       "dirty": false,
       "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
     "one-theme": {
-      "revision": "45b22049e87256e9327beb0b350e67fe81d7fc81",
+      "revision": "484213c82bbf567e2cb7cd5f85c5d73965346809",
       "dirty": false,
       "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     }
@@ -71,7 +71,7 @@
       "label": "Run a Python expression from the prompt and review the execution history.",
       "width": 1200,
       "height": 760,
-      "sha256": "c4c9affb1f0b072901810969d8d20304b709eb9f75dcbb29e02b2918a3f44d9d"
+      "sha256": "051b36f5659862d7de569c34dafb95bed076a65b658050ac8fe5afefec6b2aff"
     }
   ]
 }
